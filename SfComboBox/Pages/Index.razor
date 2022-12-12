@@ -1,0 +1,72 @@
+﻿@page "/"
+@using SourcesBC3.Data
+
+<PageTitle>Index</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<SurveyPrompt Title="How is Blazor working for you?"/>
+
+<SfAutoComplete TValue="string" TItem="Country" Placeholder="Select a country"
+                AllowCustom="true" @bind-Value="@Value" @ref="Ddl">
+    <SfDataManager DataType="Country" CrossDomain="false" AdaptorInstance="typeof(CountryAdapter)" Adaptor="Adaptors.CustomAdaptor"></SfDataManager>
+    <AutoCompleteFieldSettings Value="Code" Text="Name"/>
+    <AutoCompleteEvents TValue="string" TItem="Country" OnValueSelect="@OnValueSelect" ValueChange="@ChangeHandler"></AutoCompleteEvents>
+</SfAutoComplete>
+
+<button @onclick="AddBelgium">Add Belgium to local data</button>
+<button @onclick="SetBelgium">Set Belgium</button>
+<button @onclick="SetBermuda">Set Bermuda</button>
+<button @onclick="SetItaly">Set Italy</button>
+
+<hr/>
+Waarde is: <span>@Value</span>
+<br/>
+#waardes in lijst: <span>@CountryAdapter.LocalData.Count</span>
+
+@code {
+
+    public string Value { get; set; } = "BM";
+
+
+    private void AddBelgium(MouseEventArgs obj)
+    {
+        if (CountryAdapter.LocalData.FirstOrDefault(x => x.Code == "BE") == null)
+        {
+            CountryAdapter.LocalData.Add(new Country() { Code = "BE", Name = "Belgium" });
+        }
+    }
+
+    private void SetBelgium(MouseEventArgs obj)
+    {
+        Value = "BE";
+    }
+    private void SetBermuda(MouseEventArgs obj)
+    {
+        Value = "BM";
+    }
+    
+    private void SetItaly(MouseEventArgs obj)
+    {
+        Value = "IT";
+    }
+
+    private void  OnValueSelect(SelectEventArgs<Country> args)
+    {
+        Value = args.ItemData.Code;
+        
+    }
+    
+    public void ChangeHandler(ChangeEventArgs<string,Country> args)
+    {
+        //This method get triggered when the value of the component get changed.
+        var selectedValue = args.Value;
+        
+
+    }
+
+    public SfAutoComplete<string, Country> Ddl { get; set; }
+
+}
